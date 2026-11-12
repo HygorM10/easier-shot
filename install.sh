@@ -9,9 +9,7 @@ MOUNT_POINT="$WORK_DIR/mount"
 DMG="$WORK_DIR/EasierShot.dmg"
 
 cleanup() {
-    if mount | grep -q "on $MOUNT_POINT "; then
-        hdiutil detach "$MOUNT_POINT" -quiet || true
-    fi
+    hdiutil detach "$MOUNT_POINT" -quiet >/dev/null 2>&1 || true
     rm -rf "$WORK_DIR"
 }
 trap cleanup EXIT
@@ -26,7 +24,7 @@ echo "Baixando a versão mais recente..."
 curl --fail --location --show-error --silent "$DOWNLOAD_URL" --output "$DMG"
 
 osascript -e 'tell application "EasierShot" to quit' >/dev/null 2>&1 || true
-hdiutil attach "$DMG" -nobrowse -readonly -mountpoint "$MOUNT_POINT" >/dev/null
+diskutil image attach "$DMG" --nobrowse --readOnly --mountPoint "$MOUNT_POINT" >/dev/null
 
 if [ ! -d "$MOUNT_POINT/EasierShot.app" ]; then
     echo "O instalador não contém EasierShot.app." >&2
