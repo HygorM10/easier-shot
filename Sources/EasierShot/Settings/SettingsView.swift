@@ -16,7 +16,7 @@ struct SettingsView: View {
                     Text("EasierShot")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundStyle(theme.text)
-                    Text("v1.0.0")
+                    Text("v1.0.1")
                         .font(.system(size: 11))
                         .foregroundStyle(theme.secondaryText)
                 }
