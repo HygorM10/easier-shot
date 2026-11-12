@@ -57,6 +57,26 @@ O resultado é `build/EasierShot.dmg`. Há duas formas de instalar:
 - **Arrastar**: duplo clique no `.dmg` e arraste o EasierShot para a pasta Aplicativos.
   O disco é ejetado automaticamente na primeira vez que o app instalado for aberto.
 
+### Instalação rápida pela versão mais recente
+
+As versões publicadas ficam disponíveis nos [GitHub Releases](https://github.com/HygorM10/easier-shot/releases).
+Em um Mac, é possível baixar e instalar a versão mais recente com:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/HygorM10/easier-shot/main/install.sh | bash
+```
+
+O script baixa o `.dmg` da release mais recente, instala o app em `/Applications` e o abre.
+Para publicar uma versão, crie e envie uma tag no formato `v1.0.0`:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+Isso dispara o workflow do GitHub Actions e cria a release automaticamente. As versões atuais são builds ad hoc e podem exigir autorização em **Privacidade e Segurança** do macOS.
+Para distribuição pública sem esse aviso, será necessário configurar assinatura Developer ID e notarização da Apple no GitHub Actions.
+
 Também é possível abrir o `Package.swift` no Xcode e executar por lá. Nesse caso o programa
 roda como um executável solto, sem o pacote `.app`, e por isso aparece **sem ícone** no
 Dock e na lista de Gravação de Tela dos Ajustes do Sistema. Para ver o ícone colorido,
