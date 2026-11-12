@@ -23,8 +23,8 @@ cp -R "$APP" "$STAGING/"
 ln -s /Applications "$STAGING/Applications"
 
 # Read-write image first, so the Finder window layout can be set.
-diskutil image create from "$STAGING" --volumeName "$VOLUME" --format UDSB "$TEMP_DMG" >/dev/null
-diskutil image attach "$TEMP_DMG" >/dev/null
+hdiutil create -srcfolder "$STAGING" -volname "$VOLUME" -format UDRW -ov "$TEMP_DMG" >/dev/null
+hdiutil attach "$TEMP_DMG" -nobrowse >/dev/null
 
 # Window layout: app on the left, Applications on the right. Cosmetic only, so a
 # failure here (e.g. Finder automation not allowed) does not stop the build.
@@ -53,7 +53,7 @@ sync
 diskutil eject "/Volumes/$VOLUME" >/dev/null
 
 # Compressed, read-only image for distribution.
-diskutil image create from "$TEMP_DMG" --format UDZO "$FINAL_DMG" >/dev/null
+hdiutil convert "$TEMP_DMG" -format UDZO -ov -o "$FINAL_DMG" >/dev/null
 rm -rf "$TEMP_DMG" "$STAGING"
 
 echo "OK: $FINAL_DMG"
