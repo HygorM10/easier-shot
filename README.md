@@ -63,7 +63,7 @@ As versões publicadas ficam disponíveis nos [GitHub Releases](https://github.c
 Em um Mac, é possível baixar e instalar a versão mais recente com:
 
 ```bash
-curl -fsSL https://github.com/HygorM10/easier-shot/raw/refs/heads/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/HygorM10/easier-shot/main/install.sh | bash
 ```
 
 O script baixa o `.dmg` da release mais recente, instala o app em `/Applications` e mostra
