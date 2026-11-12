@@ -5,7 +5,7 @@ enum EditorAction {
     case copy, save, pin, cancel
 }
 
-/// Drives a capture session: grabs the screens, shows the editor overlays and runs the final action.
+/// Drives a capture session: grabs the focused screen, shows the editor overlay on it and runs the final action.
 @MainActor
 final class CaptureCoordinator {
     static let shared = CaptureCoordinator()
@@ -28,6 +28,9 @@ final class CaptureCoordinator {
             return
         }
 
+        // Decide the screen now, while the user's window still has focus: only that screen is captured.
+        guard let screen = ScreenCapturer.focusedScreen else { return }
+
         isCapturing = true
         let frontmost = NSWorkspace.shared.frontmostApplication
         previousApp = frontmost?.processIdentifier == ProcessInfo.processInfo.processIdentifier ? nil : frontmost
@@ -35,9 +38,8 @@ final class CaptureCoordinator {
             do {
                 // Give the menu bar menu time to disappear before the shot.
                 try await Task.sleep(nanoseconds: 200_000_000)
-                let shots = try await ScreenCapturer.captureAll()
-                guard !shots.isEmpty else { throw CocoaError(.featureUnsupported) }
-                present(shots)
+                let shot = try await ScreenCapturer.capture(screen)
+                present(shot)
             } catch {
                 isCapturing = false
                 showError(AppSettings.shared.t(.captureFailed), error)
@@ -45,21 +47,15 @@ final class CaptureCoordinator {
         }
     }
 
-    private func present(_ shots: [CapturedScreen]) {
-        let mouse = NSEvent.mouseLocation
-        // The screen under the pointer goes last so that its window ends up key.
-        let ordered = shots.sorted { a, b in !a.screen.frame.contains(mouse) && b.screen.frame.contains(mouse) }
-
+    private func present(_ shot: CapturedScreen) {
         AppActivation.bringToFront()
-        for shot in ordered {
-            let model = EditorModel(image: shot.image, screen: shot.screen)
-            model.coordinator = self
-            let window = OverlayWindow(screen: shot.screen)
-            window.contentView = FirstMouseHostingView(rootView: EditorView(model: model))
-            window.makeKeyAndOrderFront(nil)
-            models.append(model)
-            windows.append(window)
-        }
+        let model = EditorModel(image: shot.image, screen: shot.screen)
+        model.coordinator = self
+        let window = OverlayWindow(screen: shot.screen)
+        window.contentView = FirstMouseHostingView(rootView: EditorView(model: model))
+        window.makeKeyAndOrderFront(nil)
+        models.append(model)
+        windows.append(window)
         installMonitors()
     }
 
