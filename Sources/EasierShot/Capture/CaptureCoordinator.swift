@@ -25,7 +25,6 @@ final class CaptureCoordinator {
         guard !isCapturing else { return }
         guard ScreenCapturer.hasPermission else {
             ScreenCapturer.requestPermission()
-            showPermissionAlert()
             return
         }
 
@@ -185,21 +184,6 @@ final class CaptureCoordinator {
     }
 
     // MARK: - Alerts
-
-    private func showPermissionAlert() {
-        let settings = AppSettings.shared
-        let alert = NSAlert()
-        alert.alertStyle = .informational
-        alert.messageText = settings.t(.permissionTitle)
-        alert.informativeText = settings.t(.permissionMessage)
-        alert.addButton(withTitle: settings.t(.openSystemSettings))
-        alert.addButton(withTitle: settings.t(.cancel))
-        AppActivation.bringToFront()
-        if alert.runModal() == .alertFirstButtonReturn,
-           let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
-            NSWorkspace.shared.open(url)
-        }
-    }
 
     private func showError(_ title: String, _ error: Error) {
         let alert = NSAlert()
