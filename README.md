@@ -79,7 +79,7 @@ Segurança e reabra o app.
 
 ## Código aberto e direitos autorais
 
-O EasierShoot é um projeto de código aberto, disponibilizado sob a
+O EasierShot é um projeto de código aberto, disponibilizado sob a
 [Licença MIT](https://opensource.org/licenses/MIT).
 
 Copyright (c) 2026 HygorM10.
