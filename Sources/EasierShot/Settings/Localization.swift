@@ -3,7 +3,7 @@ import Foundation
 /// All user-facing strings, in English and Portuguese.
 enum L {
     case capture, settings, quit
-    case appearance, language, themeSystem, themeLight, themeDark
+    case appearance, language, general, launchAtLogin, launchAtLoginFailed, themeSystem, themeLight, themeDark
     case shortcuts, shortcutCapture, shortcutCopy, shortcutSave, shortcutUndo, shortcutCancel, shortcutThickness
     case scrollWheel, offlineNote
     case toolSelect, toolPencil, toolLine, toolArrow, toolRectangle, toolFilledRectangle
@@ -22,6 +22,9 @@ enum L {
         case .quit: return ("Quit EasierShot", "Encerrar EasierShot")
         case .appearance: return ("Appearance", "Aparência")
         case .language: return ("Language", "Idioma")
+        case .general: return ("General", "Geral")
+        case .launchAtLogin: return ("Open EasierShot at login", "Abrir o EasierShot ao iniciar o sistema")
+        case .launchAtLoginFailed: return ("Could not update login item", "Não foi possível atualizar a inicialização do sistema")
         case .themeSystem: return ("System", "Sistema")
         case .themeLight: return ("Light", "Claro")
         case .themeDark: return ("Dark", "Escuro")

@@ -42,6 +42,14 @@ struct SettingsView: View {
                 .labelsHidden()
             }
 
+            section(settings.t(.general), theme: theme) {
+                Toggle(settings.t(.launchAtLogin), isOn: Binding(
+                    get: { settings.launchAtLogin },
+                    set: { settings.setLaunchAtLogin($0) }
+                ))
+                .font(.system(size: 12))
+            }
+
             section(settings.t(.shortcuts), theme: theme) {
                 VStack(spacing: 6) {
                     shortcutRow(settings.t(.shortcutCapture), "⇧⌘2", theme)

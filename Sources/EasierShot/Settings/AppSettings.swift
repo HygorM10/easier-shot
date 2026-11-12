@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import ServiceManagement
 
 enum AppTheme: String, CaseIterable, Identifiable {
     case system, light, dark
@@ -49,6 +50,8 @@ final class AppSettings: ObservableObject {
         didSet { defaults.set(language.rawValue, forKey: "language") }
     }
 
+    @Published private(set) var launchAtLogin: Bool
+
     /// False when the global shortcut could not be registered (already in use by another app).
     @Published var hotKeyAvailable = true
 
@@ -56,6 +59,20 @@ final class AppSettings: ObservableObject {
         let defaults = UserDefaults.standard
         theme = AppTheme(rawValue: defaults.string(forKey: "theme") ?? "") ?? .system
         language = AppLanguage(rawValue: defaults.string(forKey: "language") ?? "") ?? AppLanguage.systemDefault
+        launchAtLogin = SMAppService.mainApp.status == .enabled
+    }
+
+    func setLaunchAtLogin(_ enabled: Bool) {
+        do {
+            if enabled {
+                try SMAppService.mainApp.register()
+            } else if SMAppService.mainApp.status == .enabled {
+                try SMAppService.mainApp.unregister()
+            }
+            launchAtLogin = SMAppService.mainApp.status == .enabled
+        } catch {
+            showLaunchAtLoginError(error)
+        }
     }
 
     func applyTheme() {
@@ -70,5 +87,14 @@ final class AppSettings: ObservableObject {
     func t(_ key: L) -> String {
         let pair = key.pair
         return language == .portuguese ? pair.pt : pair.en
+    }
+
+    private func showLaunchAtLoginError(_ error: Error) {
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = t(.launchAtLoginFailed)
+        alert.informativeText = error.localizedDescription
+        AppActivation.bringToFront()
+        alert.runModal()
     }
 }
