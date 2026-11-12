@@ -14,7 +14,7 @@ FINAL_DMG="build/EasierShot.dmg"
 
 # Make sure no older installer volume is mounted.
 if [ -d "/Volumes/$VOLUME" ]; then
-    hdiutil detach "/Volumes/$VOLUME" -force >/dev/null || true
+    diskutil eject "/Volumes/$VOLUME" >/dev/null || true
 fi
 
 rm -rf "$STAGING" "$TEMP_DMG" "$FINAL_DMG"
@@ -23,8 +23,8 @@ cp -R "$APP" "$STAGING/"
 ln -s /Applications "$STAGING/Applications"
 
 # Read-write image first, so the Finder window layout can be set.
-hdiutil create -volname "$VOLUME" -srcfolder "$STAGING" -fs HFS+ -format UDRW -ov "$TEMP_DMG" >/dev/null
-hdiutil attach "$TEMP_DMG" -readwrite -noverify -noautoopen >/dev/null
+diskutil image create from "$STAGING" --volumeName "$VOLUME" --format UDSB "$TEMP_DMG" >/dev/null
+diskutil image attach "$TEMP_DMG" >/dev/null
 
 # Window layout: app on the left, Applications on the right. Cosmetic only, so a
 # failure here (e.g. Finder automation not allowed) does not stop the build.
@@ -50,10 +50,10 @@ end tell
 APPLESCRIPT
 
 sync
-hdiutil detach "/Volumes/$VOLUME" >/dev/null || hdiutil detach "/Volumes/$VOLUME" -force >/dev/null
+diskutil eject "/Volumes/$VOLUME" >/dev/null
 
 # Compressed, read-only image for distribution.
-hdiutil convert "$TEMP_DMG" -format UDZO -imagekey zlib-level=9 -o "$FINAL_DMG" >/dev/null
+diskutil image create from "$TEMP_DMG" --format UDZO "$FINAL_DMG" >/dev/null
 rm -rf "$TEMP_DMG" "$STAGING"
 
 echo "OK: $FINAL_DMG"
