@@ -21,9 +21,10 @@ fi
 
 mkdir -p "$MOUNT_POINT"
 echo "Baixando a versão mais recente..."
-curl --fail --location --show-error --silent "$DOWNLOAD_URL" --output "$DMG"
+curl --fail --location --show-error --progress-bar "$DOWNLOAD_URL" --output "$DMG"
 
 osascript -e 'tell application "EasierShot" to quit' >/dev/null 2>&1 || true
+echo "Montando o instalador..."
 diskutil image attach "$DMG" --nobrowse --readOnly --mountPoint "$MOUNT_POINT" >/dev/null
 
 if [ ! -d "$MOUNT_POINT/EasierShot.app" ]; then
@@ -33,5 +34,5 @@ fi
 
 echo "Instalando em /Applications..."
 ditto "$MOUNT_POINT/EasierShot.app" "/Applications/EasierShot.app"
-open "/Applications/EasierShot.app"
-echo "EasierShot instalado com sucesso."
+echo "Instalação concluída: /Applications/EasierShot.app"
+echo "Abra o EasierShot pelo Finder ou pelo Launchpad."
